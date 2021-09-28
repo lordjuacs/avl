@@ -13,7 +13,8 @@ public:
     AVLTree() : root(nullptr) {}
 
     void insert(TK key, TV value) {
-        insert(this->root, key, value);
+        int extra = 0;
+        insert(this->root, key, value, extra);
     }
 
     bool find(TK key) {
@@ -80,7 +81,7 @@ private:
     /*add for avl*/
     int balancingFactor(NodeAVL<TK, TV> *node);
 
-    void insert(NodeAVL<TK, TV> *&node, TK key, TV value);
+    void insert(NodeAVL<TK, TV> *&node, TK key, TV value, int &extra);
 
     void balance(NodeAVL<TK, TV> *&node);
 
@@ -164,14 +165,21 @@ void AVLTree<TK, TV>::displayPretty(NodeAVL<TK, TV> *node, int level) {
 
 /* add for AVL*/
 template<typename TK, typename TV>
-void AVLTree<TK, TV>::insert(NodeAVL<TK, TV> *&node, TK key, TV value) {
-    if (node == nullptr)
+void AVLTree<TK, TV>::insert(NodeAVL<TK, TV> *&node, TK key, TV value, int &extra) {
+    if (node == nullptr) {
         node = new NodeAVL<TK, TV>(key, value);
-    else if (key < node->key) {
-        insert(node->left, key, value);
+        extra++;
+    } else if (key <= node->key) {
+        insert(node->left, key, value, extra);
+        if (node->left->left == nullptr && extra == 1) {
+            insert(node->left, key, value, extra);
+        }
         balance(node);
     } else {
-        insert(node->right, key, value);
+        insert(node->right, key, value, extra);
+        if (node->right->right == nullptr && extra == 1) {
+            insert(node->right, node->key, value, extra);
+        }
         balance(node);
     }
     node->height = std::max(height(node->left), height(node->right)) + 1;

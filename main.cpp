@@ -1,6 +1,7 @@
 #include "avl.h"
 
 int main(int argc, char const *argv[]) {
+    /*
     AVLTree<int, std::string> *avlTree = new AVLTree<int, std::string>();
     int n, key;
     std::cin >> n;
@@ -37,7 +38,16 @@ int main(int argc, char const *argv[]) {
             std::cout << "option not found";
             break;
     }
-    delete avlTree;
-
+    delete avlTree;*/
+    AVLTree<int, int> avl;
+    avl.insert(2, 1);
+    avl.insert(4, 1);
+    avl.insert(7, 1);
+    avl.insert(13, 1);
+    avl.insert(20, 1);
+    avl.insert(22, 1);
+    avl.insert(26, 1);
+    avl.insert(35, 1);
+    avl.displayPretty();
     return EXIT_SUCCESS;
 }
