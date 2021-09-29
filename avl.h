@@ -2,6 +2,7 @@
 #define AVLTree_H
 
 #include <iostream>
+#include <vector>
 #include "node.h"
 
 template<typename TK, typename TV>
@@ -59,7 +60,7 @@ public:
         }
     }
 
-private:
+//private:
     void displayPreOrder(NodeAVL<TK, TV> *node);
 
     bool find(NodeAVL<TK, TV> *node, TK key);
@@ -88,6 +89,12 @@ private:
     void rotateLeft(NodeAVL<TK, TV> *&parent);
 
     void rotateRight(NodeAVL<TK, TV> *&parent);
+
+    std::vector<TK> range(TK min, TK max);
+
+    NodeAVL<TK, TV> *menorAncestroComun(NodeAVL<TK, TV> *&node, TK &a, TK &b);
+
+    void reportSubTree(NodeAVL<TK, TV> *&node, std::vector<TK> &points);
 };
 
 template<typename TK, typename TV>
@@ -101,6 +108,67 @@ bool AVLTree<TK, TV>::find(NodeAVL<TK, TV> *node, TK key) {
     else
         return true;
 }
+
+template<typename TK, typename TV>
+NodeAVL<TK, TV> *AVLTree<TK, TV>::menorAncestroComun(NodeAVL<TK, TV> *&node, TK &a,
+                                                     TK &b) {
+    if (a <= node->key && b <= node->key)
+        return menorAncestroComun(node->left, a, b);
+    else if (a > node->key && b > node->key)
+        return menorAncestroComun(node->right, a, b);
+    else
+        return node;
+}
+
+template<typename TK, typename TV>
+void AVLTree<TK, TV>::reportSubTree(NodeAVL<TK, TV> *&node, std::vector<TK> &points) {
+    if (!node->left && !node->right) {
+        points.push_back(node->key);
+        return;
+    }
+    reportSubTree(node->left, points);
+    reportSubTree(node->right, points);
+
+}
+
+template<typename TK, typename TV>
+std::vector<TK> AVLTree<TK, TV>::range(TK min, TK max) {
+    std::vector<TK> points;
+    NodeAVL<TK, TV> *v_split = menorAncestroComun(this->root, min, max);
+    if (!v_split->left && !v_split->right) {
+        if (v_split->key >= min && v_split->key <= max) {
+            points.push_back(v_split->key);
+        }
+    } else {
+        NodeAVL<TK, TV> *v = v_split->left;
+        while (v->left && v->right) {
+            if (min <= v->key) {
+                reportSubTree(v->right, points);
+                v = v->left;
+            }
+            else{
+                v = v->right;
+            }
+        }
+        if (v->key >= min && v->key <= max) {
+            points.push_back(v->key);
+        }
+        v = v_split->right;
+        while (v->left && v->right) {
+            if (max >= v->key) {
+                reportSubTree(v->left, points);
+                v = v->right;
+            }
+            else{
+                v = v->left;
+            }
+        }
+        if (v->key >= min && v->key <= max) {
+            points.push_back(v->key);
+        }
+    }
+    return points;
+};
 
 template<typename TK, typename TV>
 bool AVLTree<TK, TV>::isBalanced(NodeAVL<TK, TV> *node) {
