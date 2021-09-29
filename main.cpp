@@ -60,6 +60,6 @@ int main(int argc, char const *argv[]) {
     std::sort(rango.begin(), rango.end());
     for(auto f : rango)
         std::cout << f << " ";
-    //avl.displayPretty();
+    avl.displayPretty();
     return EXIT_SUCCESS;
 }

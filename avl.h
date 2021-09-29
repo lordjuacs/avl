@@ -141,7 +141,7 @@ std::vector<TK> AVLTree<TK, TV>::range(TK min, TK max) {
         }
     } else {
         NodeAVL<TK, TV> *v = v_split->left;
-        while (v->left && v->right) {
+        while (v->left || v->right) {
             if (min <= v->key) {
                 reportSubTree(v->right, points);
                 v = v->left;
@@ -154,7 +154,7 @@ std::vector<TK> AVLTree<TK, TV>::range(TK min, TK max) {
             points.push_back(v->key);
         }
         v = v_split->right;
-        while (v->left && v->right) {
+        while (v->left || v->right) {
             if (max >= v->key) {
                 reportSubTree(v->left, points);
                 v = v->right;
